@@ -47,7 +47,7 @@ pip install geometry-free-view-synthesis/
 
 #### Running
 
-After [installation](#installation), running
+After [installation](#installation) or run ``` export PYTHONPATH="$PWD" ``` from the cloned repository then run,
 
 ```
 braindance.py
@@ -148,6 +148,41 @@ variables and run `./sparsify_realestate.sh` or `./sparsify_acid.sh`. Take a
 look into the sources to run with multiple workers in parallel.
 
 Finally, symlink `$SPA_ROOT` to `data/realestate_sparse`/`data/acid_sparse`.
+
+### Steps to generate partial dataset (Example: Acid dataset)
+* Only keep necessary entries in the acid_custom_frames.txt and acid_train_sequences.txt.
+* Copy only the text files mentioned in acid_train_sequences.txt in to the train folder of the Acid annotations. 
+* Create _ignore_ folder in the train folder and move all the other files it.
+* Copy only the text files mentioned in acid_custom_frames.txt in to the test folder of the Acid annotations. 
+* Create _ignore_ folder in the test folder and move all the other files it.
+* Clone the https://github.com/cashiwamochi/RealEstate10K_Downloader.git repository.
+* Modify dataroot to point to the annotation folder `TXT_ROOT` (folder containing the text files) of acid dataset. 
+  For Example,
+```
+dataroot = "/media/arun/DATA/LinuxData/ACID_dataset/acid_v1_release/acid/annotations/" + mode
+```
+* Modify output_root to point to the output image folder `IMG_ROOT` (images will be saved here) for acid dataset. 
+  For Example,
+```
+self.output_root = '/media/arun/DATA/LinuxData/ACID_dataset/acid_v1_release/acid/images/' + mode + '/'
+```
+* Run the command 
+```
+python3 generate_dataset.py train
+```
+* Run the command
+```
+'python3 generate_dataset.py test
+```
+* Run the following command to run colmap
+```
+python sparse_from_realestate_format.py --txt_src ${TXT_ROOT}/${SPLIT} --img_src ${IMG_ROOT}/${SPLIT} --spa_dst ${SPA_ROOT}/${SPLIT}
+```
+where, 
+- `$SPLIT` is one of `train` or `test` for both RealEstate and ACID.
+- `SPA_ROOT` is the path to store the output of colmap. It can be for example,
+  `/media/arun/DATA/LinuxData/ACID_dataset/acid_v1_release/acid/processed/`
+
 
 ### First Stage Models
 As described in [our paper](https://arxiv.org/abs/2104.07652), we train the transformer models in 

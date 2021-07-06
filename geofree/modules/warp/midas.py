@@ -1,4 +1,4 @@
-from contextlib import nullcontext
+import contextlib
 import numpy as np
 import torch
 import torch.nn as nn
@@ -36,7 +36,6 @@ def render_forward(src_ims, src_dms,
     coord = coord[None] # b,h,w,3
 
     D = src_dms[:,:,:,None,None] # b,h,w,1,1
-
     points = K_dst[:,None,None,...]@(R[:,None,None,...]@(D*K_src_inv[:,None,None,...]@coord[:,:,:,:,None])+t[:,None,None,:,:])
     points = points.squeeze(-1)
 
@@ -268,7 +267,7 @@ class Midas(nn.Module):
                       no_depth_grad=False, boltzmann_factor=None):
         b,c,h,w = f.shape
 
-        context = torch.no_grad() if no_depth_grad else nullcontext()
+        context = torch.no_grad() if no_depth_grad else contextlib.nullcontext()
         with context:
             src_dms = self.scaled_depth(x, points)
 

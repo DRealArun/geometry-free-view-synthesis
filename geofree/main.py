@@ -486,10 +486,11 @@ if __name__ == "__main__":
 
         modelckpt_cfg = lightning_config.modelcheckpoint or OmegaConf.create()
         modelckpt_cfg = OmegaConf.merge(default_modelckpt_cfg, modelckpt_cfg)
-        trainer_kwargs["checkpoint_callback"] = instantiate_from_config(modelckpt_cfg)
+        # trainer_kwargs["checkpoint_callback"] = instantiate_from_config(modelckpt_cfg)
 
         # add callback which sets up log directory
         default_callbacks_cfg = {
+            "checkpoint_callback": modelckpt_cfg,
             "setup_callback": {
                 "target": "geofree.main.SetupCallback",
                 "params": {
